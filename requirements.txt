@@ -1,0 +1,10 @@
+streamlit
+python-dotenv
+numpy==1.26.4
+faiss-cpu
+sentence-transformers
+unstructured
+langchain
+langchain-community
+langchain-groq
+groq
