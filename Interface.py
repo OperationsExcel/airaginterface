@@ -1,5 +1,9 @@
-from streamrag import process_url, generate_answer
+#Code for the Interface to be deployed on Sreamlit Cloud
 import streamlit as st
+import os
+if "GROQ_API_KEY" in st.secrets:
+    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+from streamrag import process_url, generate_answer
 st.title("AI Interface for RAG")
 URL1=st.sidebar.text_input("URL1")
 URL2=st.sidebar.text_input("URL2")
