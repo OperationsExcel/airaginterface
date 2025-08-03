@@ -8,3 +8,4 @@ langchain
 langchain-community
 langchain-groq
 groq
+python-docx
