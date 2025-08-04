@@ -34,7 +34,7 @@ def process_url(urls):
     print("Loading data scrapped from urls")
     docs = loader.load()
     from langchain_text_splitters import RecursiveCharacterTextSplitter
-    textsplitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n", ".", " "], chunk_size=250, chunk_overlap=30)
+    textsplitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n", ".", " "], chunk_size=350, chunk_overlap=30)
     print("splitting documents into chunks")
     docs_chunks = textsplitter.split_documents(docs)
     chunk_texts_list = [doc.page_content for doc in docs_chunks]
@@ -61,7 +61,7 @@ def generate_answer(query):
     #dimension = query_embedding.shape[1]
     #index = fvd.IndexFlatIP(dimension)
     #print(f"Index created with dimension: {dimension}")
-    D, I = index.search(query_embedding, k=5)
+    D, I = index.search(query_embedding, k=8)
     if I is None or len(I[0]) == 0:
         return "No results found in the vector DB."
     matched_texts = [chunk_texts_list[idx] for idx in I[0] if 0 <= idx < len(chunk_texts_list)]
@@ -115,7 +115,7 @@ def process_doc_patient(query):
     query_embedding = query_embedding.astype(np.float32)
     fvd.normalize_L2(query_embedding)
     print("Print searching for similar chunks using semantic search")
-    D, I = patient_index.search(query_embedding, k=5)
+    D, I = patient_index.search(query_embedding, k=8)
     if I is None or len(I[0]) == 0:
         return "No results found in the vector DB."
     matched_texts = [patient_text_chunks[idx] for idx in I[0] if 0 <= idx < len(patient_text_chunks)]
@@ -173,7 +173,7 @@ def process_doc_research(query):
     query_embedding = query_embedding.astype(np.float32)
     fvd.normalize_L2(query_embedding)
     print("Print searching for similar chunks using semantic search")
-    D, I = research_index.search(query_embedding, k=5)
+    D, I = research_index.search(query_embedding, k=8)
     if I is None or len(I[0]) == 0:
         return "No results found in the vector DB."
     matched_texts = [research_text_chunks[idx] for idx in I[0] if 0 <= idx < len(research_text_chunks)]
@@ -228,7 +228,7 @@ def process_doc_doctor(query):
     query_embedding = query_embedding.astype(np.float32)
     fvd.normalize_L2(query_embedding)
     print("Print searching for similar chunks using semantic search")
-    D, I = doctor_index.search(query_embedding, k=5)
+    D, I = doctor_index.search(query_embedding, k=8)
     if I is None or len(I[0]) == 0:
         return "No results found in the vector DB."
     matched_texts = [doctor_text_chunks[idx] for idx in I[0] if 0 <= idx < len(doctor_text_chunks)]
@@ -242,6 +242,16 @@ def process_doc_doctor(query):
         model="llama-3.3-70b-versatile",
         messages=[
             {"role": "user", "content": prompt}
+        ],
+        # max_tokens=2048
+    )
+    return response.choices[0].message.content
+
+def process_llm_query(query):
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {"role": "user", "content": query}
         ],
         # max_tokens=2048
     )
