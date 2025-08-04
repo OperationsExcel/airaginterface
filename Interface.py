@@ -4,9 +4,9 @@ st.set_page_config(page_title="Finesse Arogya", layout="wide")
 import os
 if "GROQ_API_KEY" in st.secrets:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
-from streamrag import process_url, generate_answer, process_doc_patient,process_doc_research, process_doc_doctor
+from streamrag import process_url, generate_answer, process_doc_patient,process_doc_research, process_doc_doctor, process_llm_query
 #st.title("Finesse Arogya: AI Interface for RAG System")
-st.markdown("<h1 style='text-align: center;'>🧠 Finesse Arogya: AI-Powered RAG System</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Finesse Arogya: AI-Powered Health Ecosystem</h1>", unsafe_allow_html=True)
 st.markdown("---")
 st.sidebar.header("🔗 URL Input")
 URL1=st.sidebar.text_input("URL1")
@@ -37,11 +37,21 @@ if patientquery:
     st.write(answer)
 researchquery=st.text_input("Question for Research papers")
 if researchquery:
-    st.header("📚 Answer From Research Papers")
-    answer=process_doc_research(researchquery)
-    st.write(answer)
+    with st.spinner("Processing research papers..."):
+     answer=process_doc_research(researchquery)
+     st.header("📚 Answer From Research Papers")
+     st.write(answer)
+    st.success("✅")
+
 doctorquery=st.text_input("Question for Doctor Experience")
 if doctorquery:
     st.header("👨‍⚕️ Answer From Doctor Experience")
     answer=process_doc_doctor(doctorquery)
     st.write(answer)
+llmserach=st.text_input("Question for LLM search")
+if llmserach:
+    with st.spinner("Processing query..."):
+     answer=process_llm_query(llmserach)
+     st.header("🧠Answer from LLM search")
+     st.write(answer)
+    st.success("✅")
